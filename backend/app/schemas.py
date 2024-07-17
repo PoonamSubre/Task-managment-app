@@ -18,7 +18,7 @@ class Task(TaskBase):
 
     class Config:
         orm_mode = True
-=======
+
 from pydantic import BaseModel
 from datetime import datetime
 
