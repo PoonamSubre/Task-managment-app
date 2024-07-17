@@ -63,7 +63,7 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Task not found")
     crud.delete_task(db=db, task_id=task_id)
     return {"detail": "Task deleted"}
-=======
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import SessionLocal, engine
