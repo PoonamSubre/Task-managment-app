@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 import axios from 'axios';
+const API_BASE_URL = "https://task-managment-app-14.onrender.com/api";
 
-const API_URL = 'http://localhost:8000/api/tasks';
-
+export { API_BASE_URL };
 export const getTasks = async () => {
   const response = await axios.get(API_URL);
   return response.data;
@@ -22,7 +21,6 @@ export const deleteTask = async (taskId) => {
   const response = await axios.delete(`${API_URL}/${taskId}`);
   return response.data;
 };
-=======
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/api/tasks';
