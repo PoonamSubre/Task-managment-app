@@ -118,4 +118,3 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Task not found")
     crud.delete_task(db=db, task_id=task_id)
     return {"detail": "Task deleted"}
->>>>>>> 267850fb757d63fd6f88ccb3c91870b8ff4ba5c2
