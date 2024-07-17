@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from sqlalchemy.orm import Session
 from . import models, schemas
 
@@ -68,4 +67,3 @@ def delete_task(db: Session, task_id: int):
     if db_task:
         db.delete(db_task)
         db.commit()
->>>>>>> 267850fb757d63fd6f88ccb3c91870b8ff4ba5c2
