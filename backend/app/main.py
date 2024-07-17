@@ -7,10 +7,9 @@ from . import models, crud, schemas
 # Create the FastAPI application instance
 app = FastAPI()
 
-# CORS middleware to allow requests from localhost:3000
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://task-managment-app-weld.vercel.app/"],
+    allow_origins=["https://task-managment-app-sand.vercel.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
