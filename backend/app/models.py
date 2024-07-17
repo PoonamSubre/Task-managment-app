@@ -13,7 +13,7 @@ class Task(Base):
     description = Column(String, index=True)
     status = Column(String, default="todo")
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
-=======
+
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
