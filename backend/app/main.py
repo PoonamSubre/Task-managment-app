@@ -4,10 +4,9 @@ from sqlalchemy.orm import Session
 from .database import SessionLocal, engine
 from . import models, crud, schemas
 
-# Create the FastAPI application instance
+
 app = FastAPI()
 
-# Allow CORS for the frontend domain
 origins = [
     "https://task-managment-app-bvfl.vercel.app",
 ]
@@ -20,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create database tables based on models
+
 models.Base.metadata.create_all(bind=engine)
 
 def get_db():
