@@ -1,52 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { getTasks } from '../api';
-import TaskItem from './TaskItem';
-import TaskForm from './TaskForm';
-import './TaskList.css';
+import { getTasks, deleteTask, updateTaskStatus } from './api';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTasks = async () => {
-      setLoading(true);
       const tasks = await getTasks();
       setTasks(tasks);
-      setLoading(false);
     };
+
     fetchTasks();
   }, []);
 
-  const handleTaskCreated = (task) => {
-    setTasks([...tasks, task]);
+  const handleDelete = async (taskId) => {
+    await deleteTask(taskId);
+    setTasks(tasks.filter(task => task.id !== taskId));
   };
 
-  const handleTaskUpdated = (updatedTask) => {
-    setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
-  };
-
-  const handleTaskDeleted = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+  const handleStatusChange = async (taskId, status) => {
+    await updateTaskStatus(taskId, status);
+    setTasks(tasks.map(task => (task.id === taskId ? { ...task, status } : task)));
   };
 
   return (
-    <div className="task-list">
-      <div className="task-form-container">
-        <TaskForm onTaskCreated={handleTaskCreated} />
-      </div>
-      <h2 className="task-list-title">Task List</h2>
-      {loading ? (
-        <p>Loading tasks...</p>
-      ) : tasks.length === 0 ? (
-        <p>No tasks available.</p>
-      ) : (
-        tasks.map((task) => (
-          <div key={task.id} className="task-list-item">
-            <TaskItem task={task} onTaskUpdated={handleTaskUpdated} onTaskDeleted={handleTaskDeleted} />
-          </div>
-        ))
-      )}
+    <div>
+      <h2>Task List</h2>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>
+            <h3>{task.title}</h3>
+            <p>{task.description}</p>
+            <select
+              value={task.status}
+              onChange={(e) => handleStatusChange(task.id, e.target.value)}
+            >
+              <option value="todo">To Do</option>
+              <option value="in_progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+            <button onClick={() => handleDelete(task.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
