@@ -1,23 +1,55 @@
-import axios from 'axios';
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from .database import SessionLocal, engine
+from . import models, crud, schemas
 
-const API_URL = 'https://task-managment-app-19.onrender.com/api';
+# Create the FastAPI application instance
+app = FastAPI()
 
-export const getTasks = async () => {
-  const response = await axios.get(`${API_URL}/tasks`);
-  return response.data;
-};
+# Allow CORS for the frontend domain
+origins = [
+    "https://task-managment-app-bvfl.vercel.app",
+]
 
-export const createTask = async (task) => {
-  const response = await axios.post(`${API_URL}/tasks`, task);
-  return response.data;
-};
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-export const updateTaskStatus = async (taskId, status) => {
-  const response = await axios.put(`${API_URL}/tasks/${taskId}`, { status });
-  return response.data;
-};
+# Create database tables based on models
+models.Base.metadata.create_all(bind=engine)
 
-export const deleteTask = async (taskId) => {
-  const response = await axios.delete(`${API_URL}/tasks/${taskId}`);
-  return response.data;
-};
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.get("/api/tasks", response_model=list[schemas.Task])
+def read_tasks(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    tasks = crud.get_tasks(db, skip=skip, limit=limit)
+    return tasks
+
+@app.post("/api/tasks", response_model=schemas.Task)
+def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
+    return crud.create_task(db=db, task=task)
+
+@app.put("/api/tasks/{task_id}", response_model=schemas.Task)
+def update_task(task_id: int, status: str, db: Session = Depends(get_db)):
+    db_task = crud.get_task(db, task_id=task_id)
+    if db_task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return crud.update_task_status(db=db, task_id=task_id, status=status)
+
+@app.delete("/api/tasks/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    db_task = crud.get_task(db, task_id=task_id)
+    if db_task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    crud.delete_task(db=db, task_id=task_id)
+    return {"detail": "Task deleted"}
