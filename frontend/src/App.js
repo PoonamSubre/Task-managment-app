@@ -1,13 +1,21 @@
-import React from 'react';
-import TaskList from './components/TaskList';
+import React, { useState } from 'react';
+import TaskList from './TaskList';
+import TaskForm from './TaskForm';
 
-function App() {
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+
+  const handleTaskAdded = (task) => {
+    setTasks([...tasks, task]);
+  };
+
   return (
-    <div className="App">
-      <h1 style={{ textAlign: 'center' }}>Task Management App</h1>
+    <div>
+      <h1>Task Management App</h1>
+      <TaskForm onTaskAdded={handleTaskAdded} />
       <TaskList />
     </div>
   );
-}
+};
 
 export default App;
